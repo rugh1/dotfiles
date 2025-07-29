@@ -174,7 +174,9 @@ vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')
 
 -- my keymaps:
 vim.keymap.set('v', '<leader>p', '"+p')
+vim.keymap.set('n', '<leader>p', '"+p')
 vim.keymap.set('v', '<leader>y', '"+y')
+vim.keymap.set('n', '<leader>y', '"+y')
 vim.keymap.set('v', 'J', ":m '>+1<CR>gv=gv")
 vim.keymap.set('v', 'K', ":m '<-2<CR>gv=gv")
 vim.keymap.set('v', '<leader>d', '"_d')
@@ -282,6 +284,47 @@ require('lazy').setup({
     config = function()
       vim.g.undotree_DiffCommand = 'C:\\Program Files\\Git\\usr\\bin\\diff.exe'
       vim.keymap.set('n', '<leader>u', vim.cmd.UndotreeToggle)
+    end,
+  },
+  {
+    'ThePrimeagen/harpoon',
+    branch = 'harpoon2',
+    dependencies = { 'nvim-lua/plenary.nvim' },
+    opts = {
+      menu = { width = vim.api.nvim_win_get_width(0) - 4 },
+      settings = { save_on_toggle = true },
+    },
+    config = function()
+      require('harpoon'):setup()
+    end,
+    keys = function()
+      local harpoon = require 'harpoon'
+      local keys = {
+        {
+          '<leader>H',
+          function()
+            harpoon:list():add()
+          end,
+          desc = 'Harpoon: add current file',
+        },
+        {
+          '<leader>h',
+          function()
+            harpoon.ui:toggle_quick_menu(harpoon:list())
+          end,
+          desc = 'Harpoon: toggle quick menu',
+        },
+      }
+      for i = 1, 5 do
+        table.insert(keys, {
+          '<leader>' .. i,
+          function()
+            harpoon:list():select(i)
+          end,
+          desc = 'Harpoon: jump to file ' .. i,
+        })
+      end
+      return keys
     end,
   },
   { -- Adds git related signs to the gutter, as well as utilities for managing changes
